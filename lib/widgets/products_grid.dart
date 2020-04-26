@@ -6,7 +6,6 @@ import 'product_item.dart';
 class ProductsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     final productsData = Provider.of<Products>(context);
     final products = productsData.items;
 
@@ -21,10 +20,13 @@ class ProductsGrid extends StatelessWidget {
       ),
       itemBuilder: (ctx, index) {
         final product = products[index];
-        return ProductItem(
-          id: product.id,
-          title: product.title,
-          imageUrl: product.imageUrl,
+        return ChangeNotifierProvider(
+          create: (c) => product,
+          child: ProductItem(
+            // id: product.id,
+            // title: product.title,
+            // imageUrl: product.imageUrl,
+          ),
         );
       },
     );
