@@ -126,13 +126,15 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      final url = 'https://shopapp-flutter-593c5.firebaseio.com/products/$id.json';
-      await http.patch(url, body: json.encode({
-        'title': newProduct.title,
-        'description': newProduct.description,
-        'price': newProduct.price,
-        'imageUrl': newProduct.imageUrl
-      }));
+      final url =
+          'https://shopapp-flutter-593c5.firebaseio.com/products/$id.json';
+      await http.patch(url,
+          body: json.encode({
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'price': newProduct.price,
+            'imageUrl': newProduct.imageUrl
+          }));
 
       _items[prodIndex] = newProduct;
       notifyListeners();
@@ -142,7 +144,25 @@ class Products with ChangeNotifier {
   }
 
   void deleteProduct(String id) {
-    _items.removeWhere((prod) => prod.id == id);
+    final url =
+        'https://shopapp-flutter-593c5.firebaseio.com/products/$id.asd';
+
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var existingProduct = _items[existingProductIndex];
+
+    _items.removeAt(existingProductIndex);
+    // _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
+
+    http.delete(url).then((response) { // Delete wont trow error by itself
+      if(response.statusCode >= 400) {
+
+      }
+      existingProduct = null;
+    }).catchError((_) {
+      print('error');
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+    });
   }
 }
