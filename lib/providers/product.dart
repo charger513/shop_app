@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -44,7 +46,8 @@ class Product with ChangeNotifier {
       } else {
         oldStatus = null;
       }
-    } catch(error) {
+    } on SocketException catch(e) {
+      print('error');
       _setFavValue(oldStatus);
     }
   }
