@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:flutter/foundation.dart';
 import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/widgets/order_item.dart';
 
 class OrderItem {
   final String id;
@@ -23,6 +24,43 @@ class Orders with ChangeNotifier {
 
   List<OrderItem> get orders {
     return [..._orders];
+  }
+
+  Future<void> fetchAndSetOrders() async {
+    const url = 'https://shopapp-flutter-593c5.firebaseio.com/orders.json';
+
+    try {
+      final response = await http.get(url);
+      final List<OrderItem> loadedOrders = [];
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
+      if(extractedData == null) {
+        return;
+      }
+
+      extractedData.forEach((orderId, orderData) {
+        loadedOrders.add(OrderItem(
+          id: orderId,
+          amount: orderData['amount'],
+          dateTime: DateTime.parse(
+            orderData['dateTime'],
+          ),
+          products: (orderData['products'] as List<dynamic>)
+              .map((item) => CartItem(
+                    id: item['id'],
+                    price: item['price'],
+                    quantity: item['quantity'],
+                    title: item['title'],
+                  ))
+              .toList(),
+        ));
+      });
+
+      _orders = loadedOrders.reversed.toList();
+      notifyListeners();
+    } catch (error) {
+      print('error');
+    }
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
