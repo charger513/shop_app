@@ -136,8 +136,8 @@ class _AuthCardState extends State<AuthCard>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _controller.dispose();
+    super.dispose();
   }
 
   void _showErrorDialog(String message) {
