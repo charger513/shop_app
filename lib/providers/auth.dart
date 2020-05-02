@@ -23,6 +23,10 @@ class Auth with ChangeNotifier {
     return null;
   }
 
+  String get userId {
+    return _userId;
+  }
+
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
     final url =
@@ -56,8 +60,9 @@ class Auth with ChangeNotifier {
       notifyListeners();
 
     } catch (error) {
-      throw error; // VS Code tiene un error que marca esto como unhandled. La línea de abajo lo soluciona (No pasa en Android Studio)
-      // return Future.error(error);
+      print(error);
+      // throw error; // VS Code tiene un error que marca esto como unhandled. La línea de abajo lo soluciona (No pasa en Android Studio)
+      return Future.error(error);
     }
   }
 
