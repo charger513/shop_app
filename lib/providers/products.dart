@@ -73,9 +73,11 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    print(filterByUser);
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     var url =
-        'https://shopapp-flutter-593c5.firebaseio.com/products.json?auth=$authToken';
+        'https://shopapp-flutter-593c5.firebaseio.com/products.json?auth=$authToken&$filterString';
 
     try {
       final response = await http.get(url);
@@ -106,6 +108,7 @@ class Products with ChangeNotifier {
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
+      // print(error);
       throw (error);
     }
   }
@@ -122,6 +125,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
+          'creatorId': userId
         }),
       );
 
